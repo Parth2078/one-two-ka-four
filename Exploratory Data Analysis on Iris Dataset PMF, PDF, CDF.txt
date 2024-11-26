@@ -1,0 +1,107 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+df = pd.read_csv("Iris.csv")
+
+
+df.head()
+
+
+df.shape
+
+
+df.columns
+
+
+df['Species'].value_counts()
+
+
+setosa = df[df['Species']=="Iris-setosa"]
+setosa['PetalLengthCm'].value_counts()
+
+
+setosa = df.loc[df['Species']=="Iris-setosa"]
+versicolor = df.loc[df['Species']=="Iris-versicolor"]
+virginica = df.loc[df['Species']=="Iris-virginica"]
+
+
+plt.plot(setosa["PetalLengthCm"],np.zeros_like(setosa['PetalLengthCm']),'o')
+plt.plot(versicolor["PetalLengthCm"],np.zeros_like(versicolor['PetalLengthCm']),'o')
+plt.plot(virginica["PetalLengthCm"],np.zeros_like(virginica['PetalLengthCm']),'o')
+plt.grid()
+
+sns.distplot(df[df['Species']=="Iris-setosa"]["PetalLengthCm"])
+plt.title("PDF")
+
+
+counts, bin_edges = np.histogram(setosa["PetalLengthCm"], bins = 10, density= False)
+
+print("Histogram counts: \n",counts)
+
+pdf = counts/(sum(counts))
+
+print("Sum: ",sum(counts))
+print("PDF : ",pdf)
+
+plt.plot(bin_edges[1:],pdf)
+#plt.gca().legend(('Pdf'))
+plt.title('PDF and PDF For iris_setosa')
+plt.xlabel("Petal length")
+plt.ylabel("Percentage")
+plt.grid()
+
+
+cdf = np.cumsum(pdf)     # cumulative sum
+print("CDF: ",cdf)
+
+plt.plot(bin_edges[1:],cdf)
+plt.gca().legend(('Cdf'))
+plt.title('CDF For iris_setosa')
+plt.xlabel("Petal length")
+plt.ylabel("Percentage")
+
+
+df.describe()
+
+
+df['SepalLengthCm'].mean()
+
+
+df['SepalLengthCm'].std()
+
+
+sns.kdeplot(df['SepalLengthCm'])
+
+
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load the Iris dataset
+df = pd.read_csv("Iris.csv")
+
+# Extract the sepal length column
+sepal_length = df['SepalLengthCm']
+
+# Discretize the data into 10 bins
+bin_edges = np.histogram_bin_edges(sepal_length, bins=10)
+bin_counts, _= np.histogram(sepal_length, bins=bin_edges)
+pmf = bin_counts / sum(bin_counts)  # Normalize to get probabilities
+
+# Calculate the bin centers for visualization
+bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+# Plot the PMF
+plt.bar(bin_centers, pmf,width=(bin_edges[1] - bin_edges[0]),  alpha=0.75, edgecolor='k')
+plt.title('PMF of Sepal Length (Iris Dataset)')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Probability')
+plt.grid()
+plt.show()
+
+
+

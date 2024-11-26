@@ -1,0 +1,109 @@
+import pandas as pd
+
+# Load the Titanic dataset
+
+titanic_data = pd.read_csv('Titanic-Dataset.csv')
+
+# Explore the dataset
+print(titanic_data.head())
+print(titanic_data.info())
+
+# Identify missing values
+print(titanic_data.isnull().sum())
+
+# Handle missing values
+titanic_data['Age'].fillna(titanic_data['Age'].median(), inplace=True)
+titanic_data['Embarked'].fillna(titanic_data['Embarked'].mode()[0], inplace=True)
+
+# Drop columns with excessive missing values
+titanic_data.drop(columns=['Cabin'], inplace=True)
+
+# Drop columns not useful for analysis
+titanic_data.drop(columns=['Ticket', 'Name'], inplace=True)
+
+
+
+
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
+# Identify categorical columns
+categorical_cols = ['Sex', 'Embarked']
+
+# Apply Label Encoding for 'Sex'
+label_encoder = LabelEncoder()
+titanic_data['Sex'] = label_encoder.fit_transform(titanic_data['Sex'])
+
+# Apply One-Hot Encoding for 'Embarked'
+titanic_data = pd.get_dummies(titanic_data, columns=['Embarked'], drop_first=True)
+
+
+# Create new features
+titanic_data['FamilySize'] = titanic_data['SibSp'] + titanic_data['Parch'] + 1
+titanic_data['IsAlone'] = (titanic_data['FamilySize'] == 1).astype(int)
+
+# Verify the newly created features
+print(titanic_data[['FamilySize', 'IsAlone']].head())
+
+
+
+from sklearn.preprocessing import StandardScaler
+
+# Identify numerical features
+numerical_cols = ['Age', 'Fare', 'FamilySize']
+
+# Apply Standardization
+scaler = StandardScaler()
+titanic_data[numerical_cols] = scaler.fit_transform(titanic_data[numerical_cols])
+
+# Verify scaling
+print(titanic_data[numerical_cols].head())
+
+
+
+from sklearn.feature_selection import SelectKBest, chi2, RFE
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+
+# Ensure all features are non-negative for Chi-Square test
+X = titanic_data.drop(columns=['Survived'])
+y = titanic_data['Survived']
+
+# Check for negative values
+print((X < 0).sum())
+
+# Apply Chi-Square test only on non-negative features
+non_negative_features = X.columns[(X >= 0).all()]
+X_non_negative = X[non_negative_features]
+
+# Univariate Selection using Chi-Square Test
+chi2_selector = SelectKBest(chi2, k=5)
+X_kbest = chi2_selector.fit_transform(X_non_negative, y)
+print("Selected features using Chi-Square Test:", X_non_negative.columns[chi2_selector.get_support()])
+
+# Recursive Feature Elimination (RFE) using Logistic Regression
+log_reg = LogisticRegression()
+rfe_selector = RFE(log_reg, n_features_to_select=5)
+rfe_selector.fit(X, y)
+print("Selected features using RFE:", X.columns[rfe_selector.get_support()])
+
+# Feature Importance using Random Forest
+rf = RandomForestClassifier()
+rf.fit(X, y)
+feature_importances = pd.Series(rf.feature_importances_, index=X.columns)
+print("Feature importances using Random Forest:\n", feature_importances.sort_values(ascending=False))
+
+
+
+from sklearn.decomposition import PCA
+
+# Standardize the data
+X_scaled = scaler.fit_transform(X)
+
+# Apply PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Analyze variance explained by each component
+print("Explained variance ratio:", pca.explained_variance_ratio_)
+
+

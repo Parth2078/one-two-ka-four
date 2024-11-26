@@ -1,0 +1,79 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+df = pd.read_csv("Titanic-Dataset.csv")
+df
+
+
+df.head()
+
+
+df.dtypes  # no () brackets
+
+
+df.describe()
+
+
+#The isnull() method returns a DataFrame object where all the values are replaced 
+#with a Boolean value True for NULL values, and otherwise False.
+
+a = df.isnull()
+count_sum = a.sum()
+print(count_sum)
+
+
+print()
+print(a.head())
+
+
+df['Age']
+
+
+meanval= df['Age'].mean()
+print(meanval)
+
+
+df['Age'].fillna(value=abs(meanval),inplace= True)
+df.tail()
+
+
+df['Embarked'].fillna(value = 0 ,inplace=True)
+a = df.isnull()
+count_sum = a.sum()
+print(count_sum)
+
+
+
+df.drop("Ticket",axis=1,inplace=True)
+df.head()
+
+
+sns.histplot(df['Age'],kde=True)
+
+
+sns.countplot(data = df ,x = "Survived",color = 'g',alpha=0.6)
+
+
+sns.countplot(data=df, x="Pclass", hue="Survived")
+
+
+sns.countplot(data=df,x="Survived",hue="Sex")
+
+
+a = df.drop(["Name","Embarked","Cabin"],axis =1)
+a.head()
+
+
+a["Sex"] = np.where(a["Sex"] == "female",0,1)   # means 0 female 1 male
+
+
+a.head()
+
+
+sns.heatmap(a.corr(),annot=True)
+
+
+sns.heatmap(a.corr(),annot=True)

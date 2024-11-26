@@ -1,0 +1,78 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+df = pd.read_csv("diabetes.csv")
+
+
+df.head()
+
+
+rows, columns = df.shape
+
+
+print("No. of Columns: ", columns)
+
+
+print("No. of Rows: ", rows)
+
+
+x = df.head(10)
+print(x)
+
+
+print("Missing values in each column:")
+print(df.isnull().sum())
+
+
+print("Dataset Dimensions: ", df.shape)
+
+
+print("Statistical summary: ")
+print(df.describe())
+
+
+print("Data info:")
+print(df.info())
+
+
+sns.heatmap(df.corr(), annot= True, cmap='coolwarm')
+plt.title("Heatmap of Correlations")
+
+
+plt.figure(figsize=(10,6))
+plt.scatter(df['Glucose'],df['Age'])
+plt.xlabel("Glucose")
+plt.ylabel("Age")
+plt.title("Scatterplot of Glucose vs Age")
+plt.show()
+
+
+sns.histplot(df['Age'], kde = True)
+plt.title("Histogram of Age")
+
+
+df.head()
+
+
+n_o = df["Outcome"].value_counts()[0]
+o = df["Outcome"].value_counts()[1]
+
+
+print(o)
+
+
+print(n_o)
+
+
+labels = ["No outcomes","Outcomes"]
+arr = np.array([n_o,o])
+plt.bar(labels, arr, color=['blue','red'])
+
+
+sns.boxplot(df['Age'])
+
+
+sns.pairplot(df)

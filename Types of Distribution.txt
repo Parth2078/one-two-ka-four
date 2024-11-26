@@ -1,0 +1,61 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
+
+# uniform distribution 
+data = np.random.uniform(0,1,1000)
+plt.hist(data , bins=20, density=True, alpha =0.5, color='g', edgecolor='k')
+plt.title("Uniform Distribution")
+plt.xlabel('Values')
+plt.ylabel('Frequency')
+plt.show()
+
+
+iris = sns.load_dataset("iris")
+iris.head()
+
+
+f = iris["sepal_length"]
+print(f)
+
+
+f = iris["sepal_length"]
+print(f)
+
+
+data = np.random.uniform(fmin, fmax, len(iris))
+plt.hist(data , bins=20, density=True, alpha =0.6, color='b',edgecolor='k')
+plt.title("Uniform Distribution")
+plt.xlabel('Values')
+plt.ylabel('Frequency')
+plt.show()
+
+
+data2 = np.random.normal(0,1,1000)
+plt.hist(data2, bins=30, density= True, alpha=0.6, color='r',edgecolor='k')
+plt.title("Normal Distribution")
+plt.xlabel('Values')
+plt.ylabel('Frequency')
+plt.show()
+
+
+data3= np.random.exponential(1/0.5, 1000) # rate parameters as 0.5
+plt.hist(data3, bins = 20, density = True, alpha=0.4,color='g',edgecolor='k')
+plt.title("Expo Distribution")
+plt.xlabel('Values')
+plt.ylabel('Frequency')
+
+
+data4 = np.random.binomial(10, 0.2, 1000)
+plt.hist(data4, bins = 20, density = True, alpha=0.6,color='m',edgecolor='k')
+plt.title("Bino Distribution")
+plt.xlabel('Values')
+plt.ylabel('Frequency')
+
+
+data5 = np.random.poisson(5, 1000)
+plt.hist(data5, bins = 20, density = True, alpha=0.3,color='m',edgecolor='k')
+plt.title("poissons Distribution")
+plt.xlabel('Values')
+plt.ylabel('Frequency')

@@ -1,0 +1,95 @@
+print(data[:5])
+
+# Identify Categorical and Numerical Variables
+def var_type(data):
+    numerical =[]
+    categorical =[]
+    for key in data[0].keys():
+        try:
+            float(data[0][key])
+            numerical.append(key)
+        except ValueError:
+            categorical.append(key)
+    return numerical, categorical
+
+numVars, catVars = var_type(data)
+print("Numerical Var:",numVars)
+print("categorical Var:",catVars)
+
+
+# Create a Contingency Table
+
+from collections import Counter
+
+def contingency(data, catVar1,catVar2):
+    counts = Counter((row[catVar1], row[catVar2]) for row in data)
+    return counts
+
+if len(catVars) >= 2:
+    table = contingency(data, catVars[0], catVars[1])
+    print("Contingency table: \n",table)
+
+
+# Calculate Statistical Measures
+
+for var in numVars:
+    values = [float(row[var]) for row in data if row[var] != '']
+
+def mean(values):
+    return sum(values) / len(values)
+
+print(mean(values))
+
+
+def median(values):
+    values.sort()
+    n = len(values)
+    mid = n//2
+    return (values[mid]) #if n%2 == 1 else (values[mid-1] + values[mid]) / 2)
+
+print(median(values))
+
+
+def mode(values):
+    return Counter(values).most_common(1)[0][0]
+
+print(mode(values))
+
+
+def variance(values):
+    avg = mean(values)
+    return sum((x - avg)**2 for x in values) / len(values)
+
+print(variance(values))
+
+
+def std_dev(values):
+    return variance(values) ** 0.5
+
+print(std_dev(values))
+
+
+def quartile(values):
+    values.sort()
+    q1 = values[len(values) // 4]
+    q3 = values[3*len(values) //4]
+    return (q3 -q1) / 2
+
+print(quartile(values))
+
+
+def categorize_categorical_vars(data,catVars):
+    categories = {}
+    for var in catVars:
+        unique_values = set(row[var] for row in data)
+        if len(unique_values) == 2:
+            categories[var] = "Binary"
+        elif len(unique_values) <= 10:
+            categories[var] = "Ordinal"
+        else:
+            categories[var] = "Nominal"
+    return categories
+
+# Categorize categorical variables
+categories = categorize_categorical_vars(data, catVars)
+print("Categorical Variable Categories:", categories)

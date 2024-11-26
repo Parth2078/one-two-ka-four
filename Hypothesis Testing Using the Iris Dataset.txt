@@ -1,0 +1,103 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+from scipy.stats import ttest_ind
+
+
+df = pd.read_csv("Iris.csv")
+
+
+df.head()
+
+
+setosa = df[df['Species']=='Iris-setosa']['SepalLengthCm']
+versicolor = df[df['Species']=='Iris-versicolor']['SepalLengthCm']
+
+
+
+# Perform two-sample t-test
+t_stat, p_value = ttest_ind(setosa, versicolor)
+
+
+print("Two-Sample t-Test Results")
+print("t-statistic =" ,t_stat, "\n p-value = ",p_value)
+
+
+if p_value < 0.05:
+    print("Reject the null hypothesis: Significant difference in sepal lengths.")
+else:
+    print("Fail to reject the null hypothesis: No significant difference in sepal lengths.")
+
+
+sns.boxplot(data= df[df['Species'].isin(['Iris-setosa','Iris-versicolor'])],x='Species', y='SepalLengthCm' )
+
+
+sns.boxplot(data =df, x='Species',y='SepalLengthCm')
+
+
+
+
+ONE WAY ANOVA
+
+
+from scipy.stats import f_oneway
+
+
+setosa = df[df['Species']=='Iris-setosa']['SepalLengthCm']
+versicolor = df[df['Species']=='Iris-versicolor']['SepalLengthCm']
+virginica = df[df['Species']=='Iris-virginica']['SepalLengthCm']
+
+f_stat, p_value = f_oneway(setosa, versicolor, virginica)
+
+
+print("ONE WAY ANOVA RESULTS: ")
+print(f_stat,"\n",p_value)
+
+
+if p_value < 0.05:
+    print("Reject the null hypothesis: At least one species has a significantly different mean.")
+else:
+    print("Fail to reject the null hypothesis: No significant differences in means.")
+
+
+sns.boxplot(data =df, x='Species',y='SepalLengthCm'
+           )
+
+
+
+
+CHI 2 TEST
+
+
+
+from scipy.stats import chi2_contingency
+
+bins = [2.0,3.0,4.0,5.0]
+labels = ['Narrow', 'Medium', 'Wide']
+
+df['SepalWidthCm'] = pd.cut(df['SepalWidthCm'] , bins=bins, labels=labels, include_lowest=True)
+
+
+# create contingency table
+contingency_table = pd.crosstab(df['Species'],df['SepalWidthCm'])
+
+
+# chi 2 test
+
+chi2, p_value, dof, expected = chi2_contingency(contingency_table)
+print("CHI2 test:")
+print('chi2: ',chi2)
+print('p_value: ',p_value)
+
+
+
+if p_value < 0.05:
+    print("Reject the null hypothesis: Sepal width and species are related.")
+else:
+    print("Fail to reject the null hypothesis: Sepal width and species are independent.")
+
+
+sns.heatmap(contingency_table, annot = True, cmap ='Blues')
